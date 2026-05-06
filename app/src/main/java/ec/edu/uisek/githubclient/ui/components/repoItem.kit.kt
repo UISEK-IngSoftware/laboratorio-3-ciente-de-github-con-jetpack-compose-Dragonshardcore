@@ -1,7 +1,17 @@
 package ec.edu.uisek.githubclient.ui.components
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -10,14 +20,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import ec.edu.uisek.githubclient.models.GithubUser
+import ec.edu.uisek.githubclient.models.Repository
 import ec.edu.uisek.githubclient.ui.theme.GithubClientTheme
 
 @Composable
 fun RepoItem(
-    repoName: String,
-    repoDescription: String?,
-    repoLanguage: String?,
-    repoImage: String
+    repository: Repository
 ) {
     Card(
         modifier = Modifier.padding(8.dp),
@@ -28,30 +37,30 @@ fun RepoItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             AsyncImage(
-                model = repoImage,
-                contentDescription = "Repo Image",
+                model = repository.owner.avatarUrl,
+                contentDescription = repository.name,
                 modifier = Modifier.size(48.dp),
                 contentScale = ContentScale.Crop
             )
             Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = repoName,
+                    text = repository.name,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.height(4.dp))
-                if (!repoDescription.isNullOrBlank()) {
+                if (!repository.description.isNullOrBlank()) {
                     Text(
-                        text = repoDescription,
+                        text = repository.description,
                         style = MaterialTheme.typography.bodyMedium,
                         maxLines = 2
                     )
                 }
                 Spacer(modifier = Modifier.height(4.dp))
-                if (!repoLanguage.isNullOrBlank()) {
+                if (!repository.language.isNullOrBlank()) {
                     Text(
-                        text = repoLanguage,
+                        text = repository.language,
                         style = MaterialTheme.typography.bodySmall,
                         maxLines = 2
                     )
@@ -65,11 +74,16 @@ fun RepoItem(
 @Composable
 fun RepoItemPreview1() {
     GithubClientTheme {
-        RepoItem(
-            repoName = "Laboratorio 3",
-            repoDescription = "Hecho con Jetpack Compose.",
-            repoLanguage = "Kotlin",
-            repoImage = "https://avatars.githubusercontent.com/u/1?v=4"
+        val repository = Repository(
+            id = "1",
+            name = "Laboratorio 3",
+            owner = GithubUser(
+                id = "1",
+                login = "CarlosCampos",
+                avatarUrl = "https://avatars.githubusercontent.com/u/1?v=4"
+            ),
+            description = "Hecho con Jetpack Compose.",
+            language = "Kotlin"
         )
     }
 }
@@ -78,11 +92,6 @@ fun RepoItemPreview1() {
 @Composable
 fun RepoItemPreview2() {
     GithubClientTheme {
-        RepoItem(
-            repoName = "Laboratory 3",
-            repoDescription = "Jetpack Compose",
-            repoLanguage = "Kotlin",
-            repoImage = "https://avatars.githubusercontent.com/u/1?v=4"
-        )
+
     }
 }
