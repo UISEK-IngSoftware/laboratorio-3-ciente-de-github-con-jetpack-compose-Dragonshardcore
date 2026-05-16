@@ -1,16 +1,22 @@
 package ec.edu.uisek.githubclient.ui.components
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -23,14 +29,60 @@ import coil.compose.AsyncImage
 import ec.edu.uisek.githubclient.models.GithubUser
 import ec.edu.uisek.githubclient.models.Repository
 import ec.edu.uisek.githubclient.ui.theme.GithubClientTheme
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.*
+
+import androidx.compose.foundation.clickable
 
 @Composable
 fun RepoItem(
-    repository: Repository
+    repository: Repository,
+    onDeleteClick: () -> Unit,
+    onClick: () -> Unit
+
 ) {
+    val dismissState = rememberSwipeToDismissBoxState(
+        confirmValueChange = { value ->
+
+            if (value == SwipeToDismissBoxValue.EndToStart) {
+                onDeleteClick()
+                true
+            } else {
+                false
+            }
+        }
+    )
+
+    SwipeToDismissBox(
+        state = dismissState,
+
+        backgroundContent = {
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(8.dp),
+                contentAlignment = Alignment.CenterEnd
+            ) {
+
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Eliminar",
+                    tint = MaterialTheme.colorScheme.error
+                )
+            }
+        },
+
+        enableDismissFromStartToEnd = false,
+        enableDismissFromEndToStart = true
+    ){
     Card(
-        modifier = Modifier.padding(8.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        modifier = Modifier
+            .padding(8.dp)
+            .clickable {
+                onClick()
+             },
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
     ) {
         Row(
             modifier = Modifier.padding(8.dp),
@@ -65,8 +117,19 @@ fun RepoItem(
                         maxLines = 2
                     )
                 }
+                /*IconButton(
+                    onClick = onDeleteClick
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Eliminar",
+                        tint = MaterialTheme.colorScheme.error
+                    )
+                }*/
+
             }
         }
+    }
     }
 }
 

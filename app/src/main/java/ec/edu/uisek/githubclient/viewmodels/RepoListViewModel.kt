@@ -17,6 +17,9 @@ class RepoListViewModel : ViewModel(){
 
     private val _errorMSG = MutableStateFlow<String?>(null)
     val errorMSG: StateFlow<String?> = _errorMSG.asStateFlow()
+    private val apiService = RetrofitClient.apiService
+
+    private val _isSuccess = MutableStateFlow(false)
 
     init {
         fetchRepos()
@@ -36,5 +39,22 @@ class RepoListViewModel : ViewModel(){
                 }
             }
         }
+    fun deleteRepo(owner: String, repo: String) {
+
+        viewModelScope.launch {
+
+            try {
+                _isLoading.value = true
+                apiService.deleteRepo(owner, repo)
+                _isSuccess.value = true
+            } catch (e: Exception) {
+                _errorMSG.value = "Error al eliminar: ${e.localizedMessage}"
+            } finally {
+                _isLoading.value = false
+                fetchRepos()
+            }
+        }
+    }
 
     }
+

@@ -36,7 +36,37 @@ class RepoFormViewModel: ViewModel() {
             }
         }
     }
+
+    fun updateRepo(
+        owner: String,
+        repo: String,
+        name: String,
+        description: String
+    ) {
+        viewModelScope.launch {
+            try {
+                _isLoading.value = true
+                apiService.updateRepo(
+                    owner,
+                    repo,
+                    mapOf(
+                        "name" to name,
+                        "description" to description
+                    )
+                )
+                _isSuccess.value = true
+            } catch (e: Exception) {
+                _errorMSG.value =
+                    "Error: ${e.localizedMessage}"
+
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
     fun resetSuccess(){
         _isSuccess.value = false
     }
+
+
 }

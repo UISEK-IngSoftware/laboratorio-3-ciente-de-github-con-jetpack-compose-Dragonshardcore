@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -29,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import ec.edu.uisek.githubclient.models.Repository
 import ec.edu.uisek.githubclient.viewmodels.RepoFormViewModel
 
 // Preview corregido
@@ -40,7 +42,8 @@ fun RepoFormPreview() {
     MaterialTheme {
         RepoForm(
             onSaveSuccess = { },
-            onBackClick = { }
+            onBackClick = { },
+
         )
     }
 }
@@ -50,14 +53,12 @@ fun RepoFormPreview() {
 fun RepoForm(
     onSaveSuccess: () -> Unit ={},
     onBackClick: () -> Unit = {},
-    viewModel: RepoFormViewModel = viewModel()
-) {
-    val isLoading by viewModel.isLoading.collectAsState()
+    viewModel: RepoFormViewModel = viewModel(),
+    repository: Repository? = null
+    ) {
     val isSuccess by viewModel.isSuccess.collectAsState()
-    val errorMsg by viewModel.errorMSG.collectAsState()
-
-    var name by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
+    var name by remember { mutableStateOf(repository?.name ?: "") }
+    var description by remember { mutableStateOf(repository?.description ?: "") }
 
     LaunchedEffect(key1= isSuccess){
         if(isSuccess){
@@ -114,15 +115,35 @@ fun RepoForm(
                     modifier = Modifier.fillMaxWidth(),
                     minLines = 3
                 )
-
                 Button(
-                    onClick = { viewModel.createRepository(name, description) },
-                    enabled = name.isNotBlank(),
+                    onClick = {
+                        if (repository == null) {
+
+                            viewModel.createRepository(
+                                name,
+                                description
+                            )
+                        } else {
+                            viewModel.updateRepo(
+                                owner = repository.owner.login,
+                                repo = repository.name,
+                                name = name,
+                                description = description
+                            )
+                        }
+                    },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Guardar Repositorio")
+
+                    Text(
+                        if (repository == null)
+                            "Guardar Repositorio"
+                        else
+                            "Actualizar Repositorio"
+                    )
                 }
             }
         }
     }
 }
+

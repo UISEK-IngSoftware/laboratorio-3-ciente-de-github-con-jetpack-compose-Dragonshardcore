@@ -1,7 +1,9 @@
 package ec.edu.uisek.githubclient.ui.screens
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -17,14 +19,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import ec.edu.uisek.githubclient.models.Repository
 import ec.edu.uisek.githubclient.ui.components.RepoItem
+import ec.edu.uisek.githubclient.viewmodels.RepoFormViewModel
 import ec.edu.uisek.githubclient.viewmodels.RepoListViewModel
 
 @Composable
 fun RepoList(
     modifier: Modifier = Modifier,
     viewModel: RepoListViewModel = viewModel(),
-    onNavigateToForm: () -> Unit = {}
+    onNavigateToForm: () -> Unit = {},
+    onEditRepo: (Repository) -> Unit
 ) {
     val repos by viewModel.repos.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
@@ -74,7 +79,17 @@ fun RepoList(
                 ) {
                     // Mejora: Usar 'items(repos)' es más eficiente y limpio que 'items(repos.size)'
                     items(repos) { repo ->
-                        RepoItem(repository = repo)
+                        RepoItem(repository = repo,
+                            onClick = {
+                                onEditRepo(repo)
+                            },
+                            onDeleteClick= {
+                            viewModel.deleteRepo(
+                                owner = repo.owner.login,
+                                repo = repo.name
+                            )
+                            }
+                        )
                     }
                 }
             }
@@ -85,5 +100,8 @@ fun RepoList(
 @Preview(showBackground = true)
 @Composable
 fun RepoListPreview() {
-    RepoList()
+    RepoList(
+        onNavigateToForm = {},
+        onEditRepo = {}
+    )
 }
