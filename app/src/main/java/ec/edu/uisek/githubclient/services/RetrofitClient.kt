@@ -23,7 +23,9 @@ object RetrofitClient {
         OkHttpClient.Builder()
             .addInterceptor(logging)
             .addInterceptor { chain ->
-                val token = authService.getToken()?.trim() ?: ""
+                val token = authService.getToken()?.trim()
+                    ?.takeIf { it.isNotBlank() }
+                    ?: BuildConfig.GITHUB_TOKEN
 
                 val requestBuilder = chain.request().newBuilder()
                     .addHeader("Accept", "application/vnd.github+json")
