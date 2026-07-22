@@ -23,7 +23,7 @@ object RetrofitClient {
         OkHttpClient.Builder()
             .addInterceptor(logging)
             .addInterceptor { chain ->
-                val token = authService.getToken() ?: ""
+                val token = authService.getToken()?.trim() ?: ""
 
                 val requestBuilder = chain.request().newBuilder()
                     .addHeader("Accept", "application/vnd.github+json")
@@ -31,9 +31,9 @@ object RetrofitClient {
                     .addHeader("Cache-Control", "no-cache, no-store, must-revalidate")
 
                 if (token.isNotBlank()) {
-                    // GitHub requiere "Bearer " para PATs modernos o "token " para antiguos.
-                    // "Bearer" es el estándar actual.
-                    requestBuilder.addHeader("Authorization", "Bearer $token")
+                    // Si el token empieza con ghp_ (token clásico de GitHub), usa "token", de lo contrario "Bearer"
+                    val authHeader = if (token.startsWith("ghp_")) "token $token" else "Bearer $token"
+                    requestBuilder.addHeader("Authorization", authHeader)
                 }
 
                 chain.proceed(requestBuilder.build())
