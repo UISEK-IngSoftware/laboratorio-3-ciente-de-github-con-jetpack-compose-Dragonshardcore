@@ -26,6 +26,8 @@ import ec.edu.uisek.githubclient.ui.components.RepoItem
 import ec.edu.uisek.githubclient.viewmodels.RepoFormViewModel
 import ec.edu.uisek.githubclient.viewmodels.RepoListViewModel
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.runtime.LaunchedEffect
+
 @Composable
 fun RepoList(
     modifier: Modifier = Modifier,
@@ -37,6 +39,9 @@ fun RepoList(
     val repos by viewModel.repos.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val errorMSG by viewModel.errorMSG.collectAsState()
+    LaunchedEffect(Unit) {
+        viewModel.fetchRepos()
+    }
 
     Scaffold(
 

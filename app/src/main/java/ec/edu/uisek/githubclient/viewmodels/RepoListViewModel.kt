@@ -21,9 +21,7 @@ class RepoListViewModel : ViewModel(){
 
     private val _isSuccess = MutableStateFlow(false)
 
-    init {
-        fetchRepos()
-    }
+
 
     fun fetchRepos (){
         viewModelScope.launch {
@@ -31,6 +29,7 @@ class RepoListViewModel : ViewModel(){
             _errorMSG.value = null
             try {
                 val repos = RetrofitClient.apiService.getRepository()
+                println("Repos recibidos: ${repos.size}")
                 _repos.value = repos
                 } catch (e: Exception) {
                     _errorMSG.value = "Error fetching repositories: ${e.localizedMessage}"
